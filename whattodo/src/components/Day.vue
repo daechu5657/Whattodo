@@ -7,9 +7,9 @@
       <div class="no-contents">
         <span>&nbsp;{{ nothingstring }}</span>
       </div>
-      <div class="yes-contents-top" :key="alarmindex">
+      <div class="yes-contents-top">
         <div v-for="(a, alarmindex) in alarmN" :key="alarmindex">
-          <div class="yes-contents-top-outside" :key="alarmN">
+          <div class="yes-contents-top-outside">
             <div
               @click="ballclick(alarmindex)"
               class="yes-contents-top-outside-alarm-frame"
@@ -56,9 +56,9 @@
               v-if="alarmclick[alarmindex] == 1"
             >
               <div class="yes-contents-top-inside-alarm123">
-                <span>Ⅰ</span>
-                <span>Ⅱ</span>
-                <span>Ⅲ</span>
+                <span v-if="alarm[alarmindex].text[0] !== ''">Ⅰ</span>
+                <span v-if="alarm[alarmindex].text[1] !== ''">Ⅱ</span>
+                <span v-if="alarm[alarmindex].text[2] !== ''">Ⅲ</span>
               </div>
               <div class="yes-contents-top-inside-alarmcontents">
                 <span v-if="alarm[alarmindex].text[0] !== ''">{{
@@ -136,7 +136,6 @@ export default {
       nothing: 1,
       nothingstring: 'Nothing',
       modifyOn: 0,
-      ball: [0, 0, 0],
       ball0: 0,
       ball1: 0,
       ball2: 0,
@@ -149,6 +148,7 @@ export default {
         day: '',
         alarmindex: 0,
         alarmorder: 0,
+        ball: 0,
       },
     };
   },
@@ -209,17 +209,17 @@ export default {
       if (alarmindex == 2) {
         this.sendtomodal.alarmindex = a.alarmN[2].index;
         if (
-          a.alarmN[2].text[2].text != '' &&
-          a.alarmN[2].text[1].text != '' &&
-          a.alarmN[2].text[0].text != ''
+          a.alarmN[2].text[2].text != undefined &&
+          a.alarmN[2].text[1].text != undefined &&
+          a.alarmN[2].text[0].text != undefined
         ) {
           this.boxindex = 3;
         } else if (
-          a.alarmN[2].text[1].text != '' &&
-          a.alarmN[2].text[0].text != ''
+          a.alarmN[2].text[1].text != undefined &&
+          a.alarmN[2].text[0].text != undefined
         ) {
           this.boxindex = 2;
-        } else if (a.alarmN[2].text[0].text != '') {
+        } else if (a.alarmN[2].text[0].text != undefined) {
           this.boxindex = 1;
         } else {
           this.boxindex = 0;
@@ -227,17 +227,17 @@ export default {
       } else if (alarmindex == 1) {
         this.sendtomodal.alarmindex = a.alarmN[1].index;
         if (
-          a.alarmN[1].text[2].text != '' &&
-          a.alarmN[1].text[1].text != '' &&
-          a.alarmN[1].text[0].text != ''
+          a.alarmN[1].text[2].text != undefined &&
+          a.alarmN[1].text[1].text != undefined &&
+          a.alarmN[1].text[0].text != undefined
         ) {
           this.boxindex = 3;
         } else if (
-          a.alarmN[1].text[1].text != '' &&
-          a.alarmN[1].text[0].text != ''
+          a.alarmN[1].text[1].text != undefined &&
+          a.alarmN[1].text[0].text != undefined
         ) {
           this.boxindex = 2;
-        } else if (a.alarmN[1].text[0].text != '') {
+        } else if (a.alarmN[1].text[0].text != undefined) {
           this.boxindex = 1;
         } else {
           this.boxindex = 0;
@@ -245,14 +245,17 @@ export default {
       } else {
         this.sendtomodal.alarmindex = a.alarmN[0].index;
         if (
-          a.alarmN[0].text[2] != '' &&
-          a.alarmN[0].text[1] != '' &&
-          a.alarmN[0].text[0] != ''
+          a.alarmN[0].text[2].text != undefined &&
+          a.alarmN[0].text[1].text != undefined &&
+          a.alarmN[0].text[0].text != undefined
         ) {
           this.boxindex = 3;
-        } else if (a.alarmN[0].text[1] != '' && a.alarmN[0].text[0] != '') {
+        } else if (
+          a.alarmN[0].text[1].text != undefined &&
+          a.alarmN[0].text[0].text != undefined
+        ) {
           this.boxindex = 2;
-        } else if (a.alarmN[0].text[0] != '') {
+        } else if (a.alarmN[0].text[0].text != undefined) {
           this.boxindex = 1;
         } else {
           this.boxindex = 0;
@@ -269,15 +272,94 @@ export default {
       var frame1 = document.getElementById('frame1');
       var ball2 = document.getElementById('ball2');
       var frame2 = document.getElementById('frame2');
+      const a = this.profile[this.profileN].contents.find(
+        x => x.month == this.month && x.day == this.day
+      );
+      let settime = a.alarmN[alarmindex].time;
+      let hour1 = settime.substr(0, 2);
+      let minute1 = settime.substr(3, 2);
+      let month1 = String(this.month);
+      let day1 = String(this.day);
+      if (month1.length == 1) {
+        month1 = '0' + month1;
+      }
+      if (day1.length == 1) {
+        day1 = '0' + day1;
+      }
+      let standard = String('2022' + month1 + day1 + hour1 + minute1 + '00');
+
+      // function delay(func, oprDate) {
+      //   var now = new Date().getTime();
+      //   while (oprDate.getTime() - now > 0) {
+      //     now = new Date().getTime();
+      //   }
+      //   if (oprDate.getTime() - now == 0) {
+      //     func;
+      //   }
+      // }
+
+      const test = dateTime => {
+        var year = Number(dateTime.substring(0, 4));
+        var month = Number(dateTime.substring(4, 6));
+        var day = Number(dateTime.substring(6, 8));
+        var time = Number(dateTime.substring(8, 10));
+        var minute = Number(dateTime.substring(10, 12));
+        var second = Number(dateTime.substring(12, 14));
+        var oprDate = new Date(year, month - 1, day, time, minute, second);
+        var nowDate = new Date();
+        var timer = oprDate.getTime() - nowDate.getTime();
+        if (timer < 0) {
+          return 0;
+        } else {
+          var interval = setInterval(() => {
+            var now = new Date().getTime();
+            if (now - oprDate.getTime() > 0) {
+              if (alarmindex == 0) {
+                alert(a.alarmN[alarmindex].title);
+                ball0.classList.remove('balling-start-ball');
+                frame0.classList.remove('balling-start-frame');
+                this.ball0 = 0;
+              } else if (alarmindex == 1) {
+                alert(a.alarmN[alarmindex].title);
+                ball1.classList.remove('balling-start-ball');
+                frame1.classList.remove('balling-start-frame');
+                this.ball1 = 0;
+              } else {
+                alert(a.alarmN[alarmindex].title);
+                ball2.classList.remove('balling-start-ball');
+                frame2.classList.remove('balling-start-frame');
+                this.ball2 = 0;
+              }
+              clearInterval(interval);
+            }
+            if (alarmindex == 0 && this.ball0 == 0) {
+              clearInterval(interval);
+            } else if (alarmindex == 1 && this.ball1 == 0) {
+              clearInterval(interval);
+            } else if (alarmindex == 2 && this.ball2 == 0) {
+              clearInterval(interval);
+            }
+          }, 1000);
+        }
+      };
+      //
+
       if (alarmindex == 0) {
+        this.sendtomodal.alarmorder = alarmindex;
         if (this.ball0 == 0) {
           ball0.classList.add('balling-start-ball');
           frame0.classList.add('balling-start-frame');
-          this.ball0++;
+          this.ball0 = 1;
+          if (test(standard) == 0) {
+            alert('시간지났어유');
+            ball0.classList.remove('balling-start-ball');
+            frame0.classList.remove('balling-start-frame');
+            this.ball0 = 0;
+          }
         } else {
           ball0.classList.add('balling-end-ball');
           frame0.classList.add('balling-end-frame');
-          this.ball0--;
+          this.ball0 = 0;
           setTimeout(function () {
             ball0.classList.remove('balling-start-ball');
             frame0.classList.remove('balling-start-frame');
@@ -286,14 +368,21 @@ export default {
           }, 350);
         }
       } else if (alarmindex == 1) {
+        this.sendtomodal.alarmorder = alarmindex;
         if (this.ball1 == 0) {
           ball1.classList.add('balling-start-ball');
           frame1.classList.add('balling-start-frame');
-          this.ball1++;
+          this.ball1 = 1;
+          if (test(standard) == 0) {
+            alert('시간지났어유');
+            ball1.classList.remove('balling-start-ball');
+            frame1.classList.remove('balling-start-frame');
+            this.ball1 = 0;
+          }
         } else {
           ball1.classList.add('balling-end-ball');
           frame1.classList.add('balling-end-frame');
-          this.ball1--;
+          this.ball1 = 0;
           setTimeout(function () {
             ball1.classList.remove('balling-start-ball');
             frame1.classList.remove('balling-start-frame');
@@ -302,14 +391,21 @@ export default {
           }, 350);
         }
       } else {
+        this.sendtomodal.alarmorder = alarmindex;
         if (this.ball2 == 0) {
           ball2.classList.add('balling-start-ball');
           frame2.classList.add('balling-start-frame');
-          this.ball2++;
+          this.ball2 = 1;
+          if (test(standard) == 0) {
+            alert('시간지났어유');
+            ball2.classList.remove('balling-start-ball');
+            frame2.classList.remove('balling-start-frame');
+            this.ball2 = 0;
+          }
         } else {
           ball2.classList.add('balling-end-ball');
           frame2.classList.add('balling-end-frame');
-          this.ball2--;
+          this.ball2 = 0;
           setTimeout(function () {
             ball2.classList.remove('balling-start-ball');
             frame2.classList.remove('balling-start-frame');
@@ -374,6 +470,13 @@ export default {
       const a = this.profile[this.profileN].contents.find(
         x => x.month == this.month && x.day == this.day
       );
+
+      var ball0 = document.getElementById('ball0');
+      var frame0 = document.getElementById('frame0');
+      // var ball1 = document.getElementById('ball1');
+      // var frame1 = document.getElementById('frame1');
+      // var ball2 = document.getElementById('ball2');
+      // var frame2 = document.getElementById('frame2');
 
       if (a.alarmN.length == 0) {
         this.alarmindex = 0;
@@ -460,6 +563,13 @@ export default {
           this.nothing = 1;
           this.alarmN = 0;
           // notthing=1이면 컨텐츠 부분에 '일정이 없습니다'라고 뜨게 v-if 로 할꺼임
+        }
+      }
+      if (a.alarmN.length == 1) {
+        if (a.alarmN[0].ball == 1) {
+          ball0.classList.add('balling-start-ball');
+          frame0.classList.add('balling-start-frame');
+          this.ball0 = 1;
         }
       }
     },
@@ -552,6 +662,31 @@ export default {
       }
     },
     month() {
+      if (this.month == 1) {
+        this.topmonth = 'January';
+      } else if (this.month == 2) {
+        this.topmonth = 'February';
+      } else if (this.month == 3) {
+        this.topmonth = 'March';
+      } else if (this.month == 4) {
+        this.topmonth = 'April';
+      } else if (this.month == 5) {
+        this.topmonth = 'May';
+      } else if (this.month == 6) {
+        this.topmonth = 'June ';
+      } else if (this.month == 7) {
+        this.topmonth = 'July';
+      } else if (this.month == 8) {
+        this.topmonth = 'August';
+      } else if (this.month == 9) {
+        this.topmonth = 'September';
+      } else if (this.month == 10) {
+        this.topmonth = 'October';
+      } else if (this.month == 11) {
+        this.topmonth = 'November';
+      } else if (this.month == 12) {
+        this.topmonth = 'December';
+      }
       const first = this.profile[0].contents.find(
         x => x.month == this.month && x.day == this.day
       );
@@ -627,6 +762,22 @@ export default {
           // notthing=1이면 컨텐츠 부분에 '일정이 없습니다'라고 뜨게 v-if 로 할꺼임
         }
       }
+      const a = this.profile[this.profileN].contents.find(
+        x => x.month == this.month && x.day == this.day
+      );
+      var ball0 = document.getElementById('ball0');
+      var frame0 = document.getElementById('frame0');
+      if (a.alarmN.length == 1) {
+        if (a.alarmN[0].ball == 1) {
+          ball0.classList.add('balling-start-ball');
+          frame0.classList.add('balling-start-frame');
+          this.ball0 = 1;
+        } else {
+          ball0.classList.remove('balling-start-ball');
+          frame0.classList.remove('balling-start-frame');
+          this.ball0 = 0;
+        }
+      }
     },
     nothing() {
       if (this.nothing == 1) {
@@ -636,34 +787,14 @@ export default {
       }
     },
     ball0() {
-      //2022
-      let 시간 = '20:50';
-      let 시 = Number(시간.substr(0, 2));
-      let 분 = Number(시간.substr(3, 2));
-      function timerFunc(data1, data2) {
-        //ex) timerFunc(function(){console.log('test');},'2021 01 08 14 47 40');
-        //시간은 24시간을 기준으로 입력하여야 합니다.
-        // var year = Number(dateTime.substring(0, 4));
-        // var month = Number(dateTime.substring(4, 6));
-        // var day = Number(dateTime.substring(6, 8));
-        // var time = Number(dateTime.substring(8, 10));
-        // var minute = Number(dateTime.substring(10, 12));
-        // var second = Number(dateTime.substring(12, 14));
-
-        var oprDate = new Date(2022, 5, 3, data1, data2, 0); //동작을 원하는 시간의 Date 객체를 생성합니다.
-        var nowDate = new Date(); //현재 날짜와 시간을 확인
-
-        var timer = oprDate.getTime() - nowDate.getTime(); //동작시간의 밀리세컨과 현재시간의 밀리세컨의 차이를 계산합니다.
-        if (timer < 0) {
-          //타이머가 0보다 작으면 함수를 종료합니다.
-          console.log('지남');
-        } else {
-          setTimeout(() => {
-            console.log('a');
-          }, timer);
-        }
-      }
-      timerFunc(시, 분);
+      this.sendtomodal._id = this.userid;
+      this.sendtomodal.profileN = this.profileN;
+      this.sendtomodal.month = this.month;
+      this.sendtomodal.day = this.day;
+      this.sendtomodal.ball = this.ball0;
+      axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+        this.$emit('updateprofilebymodal', 응답);
+      });
     },
   },
 };
@@ -840,7 +971,7 @@ body {
   flex-direction: column;
   justify-content: space-between;
   width: 700px;
-  margin-left: 85px;
+  margin-left: 90px;
 }
 .yes-contents-top-inside-alarmcontents > span {
   margin: 20px 0;

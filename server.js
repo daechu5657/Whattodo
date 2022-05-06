@@ -143,6 +143,7 @@ MongoClient.connect(
         title: 요청.body.title,
         time: 요청.body.time,
         text: [요청.body.text[0], 요청.body.text[1], 요청.body.text[2]],
+        ball: 0,
       };
       if (요청.body.profileN == 0) {
         db.collection('contents').updateMany(
@@ -265,12 +266,70 @@ MongoClient.connect(
         요청.body.text[2] = '';
       }
       var obj1 = {};
-      obj1[`profile.0.contents.$.alarmN.${요청.body.alarmorder}`] = {
+      obj1[
+        `profile.${요청.body.profileN}.contents.$.alarmN.${요청.body.alarmorder}`
+      ] = {
         index: 요청.body.alarmindex,
         title: 요청.body.title,
         time: 요청.body.time,
         text: [요청.body.text[0], 요청.body.text[1], 요청.body.text[2]],
+        ball: 요청.body.ball,
       };
+
+      if (요청.body.profileN == 0) {
+        db.collection('contents').updateOne(
+          {
+            _id: 요청.body._id,
+            'profile.0.contents': {
+              $elemMatch: {
+                month: 요청.body.month,
+                day: 요청.body.day,
+              },
+            },
+          },
+          {
+            $set: obj1,
+          },
+          function (에러, 결과) {
+            db.collection('contents')
+              .find({ _id: 요청.body._id })
+              .toArray()
+              .then(a => {
+                응답.send(a);
+              });
+          }
+        );
+      } else if (요청.body.profileN == 1) {
+        db.collection('contents').updateOne(
+          {
+            _id: 요청.body._id,
+            'profile.1.contents': {
+              $elemMatch: {
+                month: 요청.body.month,
+                day: 요청.body.day,
+              },
+            },
+          },
+          {
+            $set: obj1,
+          },
+          function (에러, 결과) {
+            db.collection('contents')
+              .find({ _id: 요청.body._id })
+              .toArray()
+              .then(a => {
+                응답.send(a);
+              });
+          }
+        );
+      }
+    });
+    app.post('/BallUpdate', function (요청, 응답) {
+      var obj1 = {};
+      obj1[
+        `profile.${요청.body.profileN}.contents.$.alarmN.${요청.body.alarmorder}.ball`
+      ] = 요청.body.ball;
+
       if (요청.body.profileN == 0) {
         db.collection('contents').updateOne(
           {

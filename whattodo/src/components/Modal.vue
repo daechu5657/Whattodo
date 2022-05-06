@@ -38,7 +38,6 @@ export default {
     return {
       index: 0,
       indexm: 0,
-      test: 0,
       senddata: {
         _id: '',
         profileN: '',
@@ -49,6 +48,7 @@ export default {
         time: '',
         text: [],
         alarmorder: 0,
+        ball: 0,
       },
     };
   },
@@ -85,12 +85,12 @@ export default {
         alert('내용입력해쥬');
       } else if (
         this.indexm == 2 &&
-        (this.senddata.text[0].text == 0 || this.senddata.text[1].text == '')
+        (this.senddata.text[0].text == '' || this.senddata.text[1].text == '')
       ) {
         alert('내용입력해쥬');
       } else if (
         this.indexm == 3 &&
-        (this.senddata.text[0].text == 0 ||
+        (this.senddata.text[0].text == '' ||
           this.senddata.text[1].text == '' ||
           this.senddata.text[2].text == '')
       ) {
@@ -116,6 +116,7 @@ export default {
       this.senddata.month = this.month;
       this.senddata.day = this.day;
       this.senddata.alarmorder = this.sendtomodal.alarmorder;
+      this.senddata.ball = this.sendtomodal.ball;
       const a = this.profile[this.profileN].contents.find(
         x => x.month == this.month && x.day == this.day
       );
@@ -134,12 +135,12 @@ export default {
         alert('내용입력해쥬');
       } else if (
         this.indexm == 2 &&
-        (this.senddata.text[0].text == 0 || this.senddata.text[1].text == '')
+        (this.senddata.text[0].text == '' || this.senddata.text[1].text == '')
       ) {
         alert('내용입력해쥬');
       } else if (
         this.indexm == 3 &&
-        (this.senddata.text[0].text == 0 ||
+        (this.senddata.text[0].text == '' ||
           this.senddata.text[1].text == '' ||
           this.senddata.text[2].text == '')
       ) {
