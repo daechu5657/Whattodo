@@ -143,7 +143,7 @@ MongoClient.connect(
         title: 요청.body.title,
         time: 요청.body.time,
         text: [요청.body.text[0], 요청.body.text[1], 요청.body.text[2]],
-        ball: 0,
+        ball: 요청.body.ball,
       };
       if (요청.body.profileN == 0) {
         db.collection('contents').updateMany(

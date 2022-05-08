@@ -208,6 +208,7 @@ export default {
       );
       if (alarmindex == 2) {
         this.sendtomodal.alarmindex = a.alarmN[2].index;
+        this.sendtomodal.ball = this.ball2;
         if (
           a.alarmN[2].text[2].text != undefined &&
           a.alarmN[2].text[1].text != undefined &&
@@ -226,6 +227,7 @@ export default {
         }
       } else if (alarmindex == 1) {
         this.sendtomodal.alarmindex = a.alarmN[1].index;
+        this.sendtomodal.ball = this.ball1;
         if (
           a.alarmN[1].text[2].text != undefined &&
           a.alarmN[1].text[1].text != undefined &&
@@ -244,6 +246,7 @@ export default {
         }
       } else {
         this.sendtomodal.alarmindex = a.alarmN[0].index;
+        this.sendtomodal.ball = this.ball0;
         if (
           a.alarmN[0].text[2].text != undefined &&
           a.alarmN[0].text[1].text != undefined &&
@@ -266,100 +269,80 @@ export default {
       this.modifyOn = 2;
     },
     ballclick(alarmindex) {
+      const a = this.profile[this.profileN].contents.find(
+        x => x.month == this.month && x.day == this.day
+      );
+      const ballupdatestandard = alarmindex => {
+        let settime = a.alarmN[alarmindex].time;
+        let hour1 = settime.substr(0, 2);
+        let minute1 = settime.substr(3, 2);
+        let month1 = String(this.month);
+        let day1 = String(this.day);
+        if (month1.length == 1) {
+          month1 = '0' + month1;
+        }
+        if (day1.length == 1) {
+          day1 = '0' + day1;
+        }
+        let standard = String('2022' + month1 + day1 + hour1 + minute1 + '00');
+        var year = Number(standard.substring(0, 4));
+        var month = Number(standard.substring(4, 6));
+        var day = Number(standard.substring(6, 8));
+        var time = Number(standard.substring(8, 10));
+        var minute = Number(standard.substring(10, 12));
+        var second = Number(standard.substring(12, 14));
+        var oprDate = new Date(year, month - 1, day, time, minute, second);
+        var nowDate = new Date();
+        var timer = oprDate.getTime() - nowDate.getTime();
+        if (timer < 0) {
+          return 0;
+        }
+      };
+      //
       var ball0 = document.getElementById('ball0');
       var frame0 = document.getElementById('frame0');
       var ball1 = document.getElementById('ball1');
       var frame1 = document.getElementById('frame1');
       var ball2 = document.getElementById('ball2');
       var frame2 = document.getElementById('frame2');
-      const a = this.profile[this.profileN].contents.find(
-        x => x.month == this.month && x.day == this.day
-      );
-      let settime = a.alarmN[alarmindex].time;
-      let hour1 = settime.substr(0, 2);
-      let minute1 = settime.substr(3, 2);
-      let month1 = String(this.month);
-      let day1 = String(this.day);
-      if (month1.length == 1) {
-        month1 = '0' + month1;
-      }
-      if (day1.length == 1) {
-        day1 = '0' + day1;
-      }
-      let standard = String('2022' + month1 + day1 + hour1 + minute1 + '00');
-
-      // function delay(func, oprDate) {
-      //   var now = new Date().getTime();
-      //   while (oprDate.getTime() - now > 0) {
-      //     now = new Date().getTime();
-      //   }
-      //   if (oprDate.getTime() - now == 0) {
-      //     func;
-      //   }
-      // }
-
-      const test = dateTime => {
-        var year = Number(dateTime.substring(0, 4));
-        var month = Number(dateTime.substring(4, 6));
-        var day = Number(dateTime.substring(6, 8));
-        var time = Number(dateTime.substring(8, 10));
-        var minute = Number(dateTime.substring(10, 12));
-        var second = Number(dateTime.substring(12, 14));
-        var oprDate = new Date(year, month - 1, day, time, minute, second);
-        var nowDate = new Date();
-        var timer = oprDate.getTime() - nowDate.getTime();
-        if (timer < 0) {
-          return 0;
-        } else {
-          var interval = setInterval(() => {
-            var now = new Date().getTime();
-            if (now - oprDate.getTime() > 0) {
-              if (alarmindex == 0) {
-                alert(a.alarmN[alarmindex].title);
-                ball0.classList.remove('balling-start-ball');
-                frame0.classList.remove('balling-start-frame');
-                this.ball0 = 0;
-              } else if (alarmindex == 1) {
-                alert(a.alarmN[alarmindex].title);
-                ball1.classList.remove('balling-start-ball');
-                frame1.classList.remove('balling-start-frame');
-                this.ball1 = 0;
-              } else {
-                alert(a.alarmN[alarmindex].title);
-                ball2.classList.remove('balling-start-ball');
-                frame2.classList.remove('balling-start-frame');
-                this.ball2 = 0;
-              }
-              clearInterval(interval);
-            }
-            if (alarmindex == 0 && this.ball0 == 0) {
-              clearInterval(interval);
-            } else if (alarmindex == 1 && this.ball1 == 0) {
-              clearInterval(interval);
-            } else if (alarmindex == 2 && this.ball2 == 0) {
-              clearInterval(interval);
-            }
-          }, 1000);
-        }
-      };
-      //
-
       if (alarmindex == 0) {
         this.sendtomodal.alarmorder = alarmindex;
-        if (this.ball0 == 0) {
+        if (this.ball0 == 0 && ballupdatestandard(alarmindex) != 0) {
           ball0.classList.add('balling-start-ball');
           frame0.classList.add('balling-start-frame');
           this.ball0 = 1;
-          if (test(standard) == 0) {
-            alert('시간지났어유');
+          this.sendtomodal._id = this.userid;
+          this.sendtomodal.profileN = this.profileN;
+          this.sendtomodal.month = this.month;
+          this.sendtomodal.day = this.day;
+          this.sendtomodal.ball = this.ball0;
+          axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+            this.$emit('updateprofilebymodal', 응답);
+          });
+        } else if (this.ball0 == 0 && ballupdatestandard(alarmindex) == 0) {
+          ball0.classList.add('balling-start-ball');
+          frame0.classList.add('balling-start-frame');
+          alert('시간이 지났네유');
+          ball0.classList.add('balling-end-ball');
+          frame0.classList.add('balling-end-frame');
+          setTimeout(function () {
             ball0.classList.remove('balling-start-ball');
             frame0.classList.remove('balling-start-frame');
-            this.ball0 = 0;
-          }
-        } else {
+            ball0.classList.remove('balling-end-ball');
+            frame0.classList.remove('balling-end-frame');
+          }, 350);
+        } else if (this.ball0 == 1) {
           ball0.classList.add('balling-end-ball');
           frame0.classList.add('balling-end-frame');
           this.ball0 = 0;
+          this.sendtomodal._id = this.userid;
+          this.sendtomodal.profileN = this.profileN;
+          this.sendtomodal.month = this.month;
+          this.sendtomodal.day = this.day;
+          this.sendtomodal.ball = this.ball0;
+          axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+            this.$emit('updateprofilebymodal', 응답);
+          });
           setTimeout(function () {
             ball0.classList.remove('balling-start-ball');
             frame0.classList.remove('balling-start-frame');
@@ -369,20 +352,42 @@ export default {
         }
       } else if (alarmindex == 1) {
         this.sendtomodal.alarmorder = alarmindex;
-        if (this.ball1 == 0) {
+        if (this.ball1 == 0 && ballupdatestandard(alarmindex) != 0) {
           ball1.classList.add('balling-start-ball');
           frame1.classList.add('balling-start-frame');
           this.ball1 = 1;
-          if (test(standard) == 0) {
-            alert('시간지났어유');
+          this.sendtomodal._id = this.userid;
+          this.sendtomodal.profileN = this.profileN;
+          this.sendtomodal.month = this.month;
+          this.sendtomodal.day = this.day;
+          this.sendtomodal.ball = this.ball1;
+          axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+            this.$emit('updateprofilebymodal', 응답);
+          });
+        } else if (this.ball1 == 0 && ballupdatestandard(alarmindex) == 0) {
+          ball1.classList.add('balling-start-ball');
+          frame1.classList.add('balling-start-frame');
+          alert('시간이 지났네유');
+          ball1.classList.add('balling-end-ball');
+          frame1.classList.add('balling-end-frame');
+          setTimeout(function () {
             ball1.classList.remove('balling-start-ball');
             frame1.classList.remove('balling-start-frame');
-            this.ball1 = 0;
-          }
-        } else {
+            ball1.classList.remove('balling-end-ball');
+            frame1.classList.remove('balling-end-frame');
+          }, 350);
+        } else if (this.ball1 == 1) {
           ball1.classList.add('balling-end-ball');
           frame1.classList.add('balling-end-frame');
           this.ball1 = 0;
+          this.sendtomodal._id = this.userid;
+          this.sendtomodal.profileN = this.profileN;
+          this.sendtomodal.month = this.month;
+          this.sendtomodal.day = this.day;
+          this.sendtomodal.ball = this.ball1;
+          axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+            this.$emit('updateprofilebymodal', 응답);
+          });
           setTimeout(function () {
             ball1.classList.remove('balling-start-ball');
             frame1.classList.remove('balling-start-frame');
@@ -390,22 +395,44 @@ export default {
             frame1.classList.remove('balling-end-frame');
           }, 350);
         }
-      } else {
+      } else if (alarmindex == 2) {
         this.sendtomodal.alarmorder = alarmindex;
-        if (this.ball2 == 0) {
+        if (this.ball2 == 0 && ballupdatestandard(alarmindex) != 0) {
           ball2.classList.add('balling-start-ball');
           frame2.classList.add('balling-start-frame');
           this.ball2 = 1;
-          if (test(standard) == 0) {
-            alert('시간지났어유');
+          this.sendtomodal._id = this.userid;
+          this.sendtomodal.profileN = this.profileN;
+          this.sendtomodal.month = this.month;
+          this.sendtomodal.day = this.day;
+          this.sendtomodal.ball = this.ball2;
+          axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+            this.$emit('updateprofilebymodal', 응답);
+          });
+        } else if (this.ball2 == 0 && ballupdatestandard(alarmindex) == 0) {
+          ball2.classList.add('balling-start-ball');
+          frame2.classList.add('balling-start-frame');
+          alert('시간이 지났네유');
+          ball2.classList.add('balling-end-ball');
+          frame2.classList.add('balling-end-frame');
+          setTimeout(function () {
             ball2.classList.remove('balling-start-ball');
             frame2.classList.remove('balling-start-frame');
-            this.ball2 = 0;
-          }
-        } else {
+            ball2.classList.remove('balling-end-ball');
+            frame2.classList.remove('balling-end-frame');
+          }, 350);
+        } else if (this.ball2 == 1) {
           ball2.classList.add('balling-end-ball');
           frame2.classList.add('balling-end-frame');
           this.ball2 = 0;
+          this.sendtomodal._id = this.userid;
+          this.sendtomodal.profileN = this.profileN;
+          this.sendtomodal.month = this.month;
+          this.sendtomodal.day = this.day;
+          this.sendtomodal.ball = this.ball2;
+          axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+            this.$emit('updateprofilebymodal', 응답);
+          });
           setTimeout(function () {
             ball2.classList.remove('balling-start-ball');
             frame2.classList.remove('balling-start-frame');
@@ -467,16 +494,40 @@ export default {
       } else if (this.month == 12) {
         this.topmonth = 'December';
       }
-      const a = this.profile[this.profileN].contents.find(
-        x => x.month == this.month && x.day == this.day
-      );
+      const ballupdatestandard = alarmindex => {
+        let settime = a.alarmN[alarmindex].time;
+        let hour1 = settime.substr(0, 2);
+        let minute1 = settime.substr(3, 2);
+        let month1 = String(this.month);
+        let day1 = String(this.day);
+        if (month1.length == 1) {
+          month1 = '0' + month1;
+        }
+        if (day1.length == 1) {
+          day1 = '0' + day1;
+        }
+        let standard = String('2022' + month1 + day1 + hour1 + minute1 + '00');
+        var year = Number(standard.substring(0, 4));
+        var month = Number(standard.substring(4, 6));
+        var day = Number(standard.substring(6, 8));
+        var time = Number(standard.substring(8, 10));
+        var minute = Number(standard.substring(10, 12));
+        var second = Number(standard.substring(12, 14));
+        var oprDate = new Date(year, month - 1, day, time, minute, second);
+        var nowDate = new Date();
+        var timer = oprDate.getTime() - nowDate.getTime();
+        if (timer < 0) {
+          return 0;
+        }
+      };
 
-      var ball0 = document.getElementById('ball0');
-      var frame0 = document.getElementById('frame0');
       // var ball1 = document.getElementById('ball1');
       // var frame1 = document.getElementById('frame1');
       // var ball2 = document.getElementById('ball2');
       // var frame2 = document.getElementById('frame2');
+      const a = this.profile[this.profileN].contents.find(
+        x => x.month == this.month && x.day == this.day
+      );
 
       if (a.alarmN.length == 0) {
         this.alarmindex = 0;
@@ -509,9 +560,6 @@ export default {
       if (this.month == m && this.day == d) {
         // 그리고 날짜에 맞는 배열을 선택해야하니
 
-        const a = this.profile[this.profileN].contents.find(
-          x => x.month == this.month && x.day == this.day
-        );
         // 그리고 a의 alarm부분을 this.alarm0 this.alarm1 this.alarm2 에 저장하는데
         // alarm이 항상 있는건 아니니 조건식으로
         if (a.alarmN.length == 3) {
@@ -565,19 +613,117 @@ export default {
           // notthing=1이면 컨텐츠 부분에 '일정이 없습니다'라고 뜨게 v-if 로 할꺼임
         }
       }
-      if (a.alarmN.length == 1) {
-        if (a.alarmN[0].ball == 1) {
-          ball0.classList.add('balling-start-ball');
-          frame0.classList.add('balling-start-frame');
-          this.ball0 = 1;
+      setTimeout(() => {
+        var ball0 = document.getElementById('ball0');
+        var frame0 = document.getElementById('frame0');
+        if (a.alarmN.length >= 1) {
+          if (a.alarmN[0].ball == 1 && ballupdatestandard(0) != 0) {
+            this.ball0 = 1;
+            console.log(1);
+          } else if (a.alarmN[0].ball == 1 && ballupdatestandard(0) == 0) {
+            alert('알림다시맞춰주세용');
+            ball0.classList.remove('balling-start-ball');
+            frame0.classList.remove('balling-start-frame');
+            this.ball0 = 0;
+            this.sendtomodal._id = this.userid;
+            this.sendtomodal.profileN = this.profileN;
+            this.sendtomodal.month = this.month;
+            this.sendtomodal.day = this.day;
+            this.sendtomodal.ball = this.ball0;
+            axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+              this.$emit('updateprofilebymodal', 응답);
+            });
+          } else {
+            this.ball0 = 0;
+            console.log(2);
+          }
         }
-      }
+      }, 1000);
+      setTimeout(() => {
+        var ball1 = document.getElementById('ball1');
+        var frame1 = document.getElementById('frame1');
+        if (a.alarmN.length >= 2) {
+          if (a.alarmN[1].ball == 1 && ballupdatestandard(1) != 0) {
+            this.ball1 = 1;
+            console.log(1);
+          } else if (a.alarmN[1].ball == 1 && ballupdatestandard(1) == 0) {
+            alert('알림다시맞춰주세용');
+            ball1.classList.remove('balling-start-ball');
+            frame1.classList.remove('balling-start-frame');
+            this.ball1 = 0;
+            this.sendtomodal._id = this.userid;
+            this.sendtomodal.profileN = this.profileN;
+            this.sendtomodal.month = this.month;
+            this.sendtomodal.day = this.day;
+            this.sendtomodal.ball = this.ball1;
+            axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+              this.$emit('updateprofilebymodal', 응답);
+            });
+          } else {
+            this.ball1 = 0;
+            console.log(2);
+          }
+        }
+      }, 1000);
+
+      setTimeout(() => {
+        var ball2 = document.getElementById('ball2');
+        var frame2 = document.getElementById('frame2');
+        if (a.alarmN.length >= 3) {
+          if (a.alarmN[2].ball == 1 && ballupdatestandard(2) != 0) {
+            this.ball2 = 1;
+            console.log(1);
+          } else if (a.alarmN[2].ball == 1 && ballupdatestandard(2) == 0) {
+            alert('알림다시맞춰주세용');
+            ball2.classList.remove('balling-start-ball');
+            frame2.classList.remove('balling-start-frame');
+            this.ball2 = 0;
+            this.sendtomodal._id = this.userid;
+            this.sendtomodal.profileN = this.profileN;
+            this.sendtomodal.month = this.month;
+            this.sendtomodal.day = this.day;
+            this.sendtomodal.ball = this.ball2;
+            axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+              this.$emit('updateprofilebymodal', 응답);
+            });
+          } else {
+            this.ball2 = 0;
+            console.log(2);
+          }
+        }
+      }, 1000);
     },
     profileN() {
       // 그리고 날짜에 맞는 배열을 선택해야하니
       const a = this.profile[this.profileN].contents.find(
         x => x.month == this.month && x.day == this.day
       );
+      const ballupdatestandard = alarmindex => {
+        let settime = a.alarmN[alarmindex].time;
+        let hour1 = settime.substr(0, 2);
+        let minute1 = settime.substr(3, 2);
+        let month1 = String(this.month);
+        let day1 = String(this.day);
+        if (month1.length == 1) {
+          month1 = '0' + month1;
+        }
+        if (day1.length == 1) {
+          day1 = '0' + day1;
+        }
+        let standard = String('2022' + month1 + day1 + hour1 + minute1 + '00');
+        var year = Number(standard.substring(0, 4));
+        var month = Number(standard.substring(4, 6));
+        var day = Number(standard.substring(6, 8));
+        var time = Number(standard.substring(8, 10));
+        var minute = Number(standard.substring(10, 12));
+        var second = Number(standard.substring(12, 14));
+        var oprDate = new Date(year, month - 1, day, time, minute, second);
+        var nowDate = new Date();
+        var timer = oprDate.getTime() - nowDate.getTime();
+        if (timer < 0) {
+          return 0;
+        }
+      };
       if (a.alarmN.length == 3) {
         this.alarm[0] = a.alarmN[0];
         this.alarm[1] = a.alarmN[1];
@@ -654,6 +800,72 @@ export default {
           this.alarmindex = 0;
         }
       }
+
+      setTimeout(() => {
+        if (a.alarmN.length >= 1) {
+          if (a.alarmN[0].ball == 1 && ballupdatestandard(0) != 0) {
+            this.ball0 = 1;
+          } else if (a.alarmN[0].ball == 1 && ballupdatestandard(0) == 0) {
+            this.ball0 = 0;
+            this.sendtomodal._id = this.userid;
+            this.sendtomodal.profileN = this.profileN;
+            this.sendtomodal.month = this.month;
+            this.sendtomodal.day = this.day;
+            this.sendtomodal.ball = this.ball0;
+            axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+              this.$emit('updateprofilebymodal', 응답);
+            });
+          } else {
+            this.ball0 = 0;
+          }
+        } else {
+          this.ball0 = 0;
+        }
+      }, 1000);
+
+      setTimeout(() => {
+        if (a.alarmN.length >= 2) {
+          if (a.alarmN[1].ball == 1 && ballupdatestandard(1) != 0) {
+            this.ball1 = 1;
+          } else if (a.alarmN[1].ball == 1 && ballupdatestandard(1) == 0) {
+            this.ball1 = 0;
+            this.sendtomodal._id = this.userid;
+            this.sendtomodal.profileN = this.profileN;
+            this.sendtomodal.month = this.month;
+            this.sendtomodal.day = this.day;
+            this.sendtomodal.ball = this.ball1;
+            axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+              this.$emit('updateprofilebymodal', 응답);
+            });
+          } else {
+            this.ball1 = 0;
+          }
+        } else {
+          this.ball1 = 0;
+        }
+      }, 1000);
+
+      setTimeout(() => {
+        if (a.alarmN.length >= 3) {
+          if (a.alarmN[2].ball == 1 && ballupdatestandard(2) != 0) {
+            this.ball2 = 1;
+          } else if (a.alarmN[2].ball == 1 && ballupdatestandard(2) == 0) {
+            this.ball2 = 0;
+            this.sendtomodal._id = this.userid;
+            this.sendtomodal.profileN = this.profileN;
+            this.sendtomodal.month = this.month;
+            this.sendtomodal.day = this.day;
+            this.sendtomodal.ball = this.ball2;
+            axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+              this.$emit('updateprofilebymodal', 응답);
+            });
+          } else {
+            this.ball2 = 0;
+          }
+        } else {
+          this.ball2 = 0;
+        }
+      }, 1000);
     },
     TodayOn() {
       if (this.TodayOn == 1) {
@@ -662,6 +874,32 @@ export default {
       }
     },
     month() {
+      const ballupdatestandard = alarmindex => {
+        let settime = a.alarmN[alarmindex].time;
+        let hour1 = settime.substr(0, 2);
+        let minute1 = settime.substr(3, 2);
+        let month1 = String(this.month);
+        let day1 = String(this.day);
+        if (month1.length == 1) {
+          month1 = '0' + month1;
+        }
+        if (day1.length == 1) {
+          day1 = '0' + day1;
+        }
+        let standard = String('2022' + month1 + day1 + hour1 + minute1 + '00');
+        var year = Number(standard.substring(0, 4));
+        var month = Number(standard.substring(4, 6));
+        var day = Number(standard.substring(6, 8));
+        var time = Number(standard.substring(8, 10));
+        var minute = Number(standard.substring(10, 12));
+        var second = Number(standard.substring(12, 14));
+        var oprDate = new Date(year, month - 1, day, time, minute, second);
+        var nowDate = new Date();
+        var timer = oprDate.getTime() - nowDate.getTime();
+        if (timer < 0) {
+          return 0;
+        }
+      };
       if (this.month == 1) {
         this.topmonth = 'January';
       } else if (this.month == 2) {
@@ -693,8 +931,14 @@ export default {
       const sceond = this.profile[1].contents.find(
         x => x.month == this.month && x.day == this.day
       );
+      let send = [{ _id: '' }, { month: '' }, { day: '' }];
+      send[0]._id = this.userid;
+      send[1].month = this.month;
+      send[2].day = this.day;
       if (first === undefined || sceond === undefined) {
-        console.log('암것도안행');
+        axios.post('/BeforeUpdate', send).then(응답 => {
+          this.$emit('updateprofile', 응답);
+        });
       } else {
         const a = this.profile[this.profileN].contents.find(
           x => x.month == this.month && x.day == this.day
@@ -720,12 +964,110 @@ export default {
           // notthing=1이면 컨텐츠 부분에 '일정이 없습니다'라고 뜨게 v-if 로 할꺼임
         }
       }
+      const a = this.profile[this.profileN].contents.find(
+        x => x.month == this.month && x.day == this.day
+      );
+      setTimeout(() => {
+        if (a.alarmN.length >= 0) {
+          if (a.alarmN[0].ball == 1 && ballupdatestandard(0) != 0) {
+            this.ball0 = 1;
+            console.log(7);
+          } else if (a.alarmN[0].ball == 1 && ballupdatestandard(0) == 0) {
+            this.ball0 = 0;
+            this.sendtomodal._id = this.userid;
+            this.sendtomodal.profileN = this.profileN;
+            this.sendtomodal.month = this.month;
+            this.sendtomodal.day = this.day;
+            this.sendtomodal.ball = this.ball0;
+            axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+              this.$emit('updateprofilebymodal', 응답);
+            });
+          } else {
+            this.ball0 = 0;
+            console.log(8);
+          }
+        } else {
+          this.ball0 = 0;
+        }
+      }, 1000);
+      setTimeout(() => {
+        if (a.alarmN.length >= 1) {
+          if (a.alarmN[1].ball == 1 && ballupdatestandard(1) != 0) {
+            this.ball1 = 1;
+            console.log(7);
+          } else if (a.alarmN[1].ball == 1 && ballupdatestandard(1) == 0) {
+            this.ball1 = 0;
+            this.sendtomodal._id = this.userid;
+            this.sendtomodal.profileN = this.profileN;
+            this.sendtomodal.month = this.month;
+            this.sendtomodal.day = this.day;
+            this.sendtomodal.ball = this.ball1;
+            axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+              this.$emit('updateprofilebymodal', 응답);
+            });
+          } else {
+            this.ball1 = 0;
+            console.log(8);
+          }
+        } else {
+          this.ball1 = 0;
+        }
+      }, 1000);
+      setTimeout(() => {
+        if (a.alarmN.length >= 2) {
+          if (a.alarmN[2].ball == 1 && ballupdatestandard(2) != 0) {
+            this.ball2 = 1;
+            console.log(7);
+          } else if (a.alarmN[2].ball == 1 && ballupdatestandard(2) == 0) {
+            this.ball2 = 0;
+            this.sendtomodal._id = this.userid;
+            this.sendtomodal.profileN = this.profileN;
+            this.sendtomodal.month = this.month;
+            this.sendtomodal.day = this.day;
+            this.sendtomodal.ball = this.ball2;
+            axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+              this.$emit('updateprofilebymodal', 응답);
+            });
+          } else {
+            this.ball2 = 0;
+            console.log(8);
+          }
+        } else {
+          this.ball2 = 0;
+        }
+      }, 1000);
     },
     day() {
       let send = [{ _id: '' }, { month: '' }, { day: '' }];
       send[0]._id = this.userid;
       send[1].month = this.month;
       send[2].day = this.day;
+      const ballupdatestandard = alarmindex => {
+        let settime = a.alarmN[alarmindex].time;
+        let hour1 = settime.substr(0, 2);
+        let minute1 = settime.substr(3, 2);
+        let month1 = String(this.month);
+        let day1 = String(this.day);
+        if (month1.length == 1) {
+          month1 = '0' + month1;
+        }
+        if (day1.length == 1) {
+          day1 = '0' + day1;
+        }
+        let standard = String('2022' + month1 + day1 + hour1 + minute1 + '00');
+        var year = Number(standard.substring(0, 4));
+        var month = Number(standard.substring(4, 6));
+        var day = Number(standard.substring(6, 8));
+        var time = Number(standard.substring(8, 10));
+        var minute = Number(standard.substring(10, 12));
+        var second = Number(standard.substring(12, 14));
+        var oprDate = new Date(year, month - 1, day, time, minute, second);
+        var nowDate = new Date();
+        var timer = oprDate.getTime() - nowDate.getTime();
+        if (timer < 0) {
+          return 0;
+        }
+      };
 
       const first = this.profile[0].contents.find(
         x => x.month == this.month && x.day == this.day
@@ -765,19 +1107,77 @@ export default {
       const a = this.profile[this.profileN].contents.find(
         x => x.month == this.month && x.day == this.day
       );
-      var ball0 = document.getElementById('ball0');
-      var frame0 = document.getElementById('frame0');
-      if (a.alarmN.length == 1) {
-        if (a.alarmN[0].ball == 1) {
-          ball0.classList.add('balling-start-ball');
-          frame0.classList.add('balling-start-frame');
-          this.ball0 = 1;
+      setTimeout(() => {
+        if (a.alarmN.length >= 1) {
+          if (a.alarmN[0].ball == 1 && ballupdatestandard(0) != 0) {
+            this.ball0 = 1;
+            console.log(3);
+          } else if (a.alarmN[0].ball == 1 && ballupdatestandard(0) == 0) {
+            this.ball0 = 0;
+            this.sendtomodal._id = this.userid;
+            this.sendtomodal.profileN = this.profileN;
+            this.sendtomodal.month = this.month;
+            this.sendtomodal.day = this.day;
+            this.sendtomodal.ball = this.ball0;
+            axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+              this.$emit('updateprofilebymodal', 응답);
+            });
+          } else {
+            this.ball0 = 0;
+            console.log(4);
+          }
         } else {
-          ball0.classList.remove('balling-start-ball');
-          frame0.classList.remove('balling-start-frame');
           this.ball0 = 0;
         }
-      }
+      }, 1000);
+
+      setTimeout(() => {
+        if (a.alarmN.length >= 2) {
+          if (a.alarmN[1].ball == 1 && ballupdatestandard(1) != 0) {
+            this.ball1 = 1;
+            console.log(3);
+          } else if (a.alarmN[1].ball == 1 && ballupdatestandard(1) == 0) {
+            this.ball1 = 0;
+            this.sendtomodal._id = this.userid;
+            this.sendtomodal.profileN = this.profileN;
+            this.sendtomodal.month = this.month;
+            this.sendtomodal.day = this.day;
+            this.sendtomodal.ball = this.ball1;
+            axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+              this.$emit('updateprofilebymodal', 응답);
+            });
+          } else {
+            this.ball1 = 0;
+            console.log(4);
+          }
+        } else {
+          this.ball1 = 0;
+        }
+      }, 1000);
+
+      setTimeout(() => {
+        if (a.alarmN.length >= 3) {
+          if (a.alarmN[2].ball == 1 && ballupdatestandard(2) != 0) {
+            this.ball2 = 1;
+            console.log(3);
+          } else if (a.alarmN[2].ball == 1 && ballupdatestandard(2) == 0) {
+            this.ball2 = 0;
+            this.sendtomodal._id = this.userid;
+            this.sendtomodal.profileN = this.profileN;
+            this.sendtomodal.month = this.month;
+            this.sendtomodal.day = this.day;
+            this.sendtomodal.ball = this.ball2;
+            axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+              this.$emit('updateprofilebymodal', 응답);
+            });
+          } else {
+            this.ball2 = 0;
+            console.log(4);
+          }
+        } else {
+          this.ball2 = 0;
+        }
+      }, 1000);
     },
     nothing() {
       if (this.nothing == 1) {
@@ -787,14 +1187,264 @@ export default {
       }
     },
     ball0() {
-      this.sendtomodal._id = this.userid;
-      this.sendtomodal.profileN = this.profileN;
-      this.sendtomodal.month = this.month;
-      this.sendtomodal.day = this.day;
-      this.sendtomodal.ball = this.ball0;
-      axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
-        this.$emit('updateprofilebymodal', 응답);
-      });
+      var ball0 = document.getElementById('ball0');
+      var frame0 = document.getElementById('frame0');
+      var ball1 = document.getElementById('ball1');
+      var frame1 = document.getElementById('frame1');
+      var ball2 = document.getElementById('ball2');
+      var frame2 = document.getElementById('frame2');
+      const a = this.profile[this.profileN].contents.find(
+        x => x.month == this.month && x.day == this.day
+      );
+
+      const alarmfunc = alarmindex => {
+        let settime = a.alarmN[alarmindex].time;
+        let hour1 = settime.substr(0, 2);
+        let minute1 = settime.substr(3, 2);
+        let month1 = String(this.month);
+        let day1 = String(this.day);
+        if (month1.length == 1) {
+          month1 = '0' + month1;
+        }
+        if (day1.length == 1) {
+          day1 = '0' + day1;
+        }
+        let standard = String('2022' + month1 + day1 + hour1 + minute1 + '00');
+        var year = Number(standard.substring(0, 4));
+        var month = Number(standard.substring(4, 6));
+        var day = Number(standard.substring(6, 8));
+        var time = Number(standard.substring(8, 10));
+        var minute = Number(standard.substring(10, 12));
+        var second = Number(standard.substring(12, 14));
+        var oprDate = new Date(year, month - 1, day, time, minute, second);
+        var nowDate = new Date();
+        var timer = oprDate.getTime() - nowDate.getTime();
+        if (timer < 0) {
+          return 0;
+        } else {
+          var interval = setInterval(() => {
+            var now = new Date().getTime();
+            if (now - oprDate.getTime() > 0) {
+              if (alarmindex == 0) {
+                alert(a.alarmN[alarmindex].title);
+                ball0.classList.remove('balling-start-ball');
+                frame0.classList.remove('balling-start-frame');
+                this.ball0 = 0;
+                this.sendtomodal._id = this.userid;
+                this.sendtomodal.profileN = this.profileN;
+                this.sendtomodal.month = this.month;
+                this.sendtomodal.day = this.day;
+                this.sendtomodal.ball = this.ball0;
+                axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+                  this.$emit('updateprofilebymodal', 응답);
+                });
+              } else if (alarmindex == 1) {
+                alert(a.alarmN[alarmindex].title);
+                ball1.classList.remove('balling-start-ball');
+                frame1.classList.remove('balling-start-frame');
+                this.ball1 = 0;
+              } else {
+                alert(a.alarmN[alarmindex].title);
+                ball2.classList.remove('balling-start-ball');
+                frame2.classList.remove('balling-start-frame');
+                this.ball2 = 0;
+              }
+
+              clearInterval(interval);
+            }
+            if (alarmindex == 0 && this.ball0 == 0) {
+              clearInterval(interval);
+            } else if (alarmindex == 1 && this.ball1 == 0) {
+              clearInterval(interval);
+            } else if (alarmindex == 2 && this.ball2 == 0) {
+              clearInterval(interval);
+            }
+          }, 1000);
+        }
+      };
+
+      if (this.ball0 == 1) {
+        ball0.classList.add('balling-start-ball');
+        frame0.classList.add('balling-start-frame');
+        alarmfunc(0);
+      } else {
+        if (a.alarmN.length != 0) {
+          ball0.classList.remove('balling-start-ball');
+          frame0.classList.remove('balling-start-frame');
+        }
+      }
+    },
+    ball1() {
+      var ball0 = document.getElementById('ball0');
+      var frame0 = document.getElementById('frame0');
+      var ball1 = document.getElementById('ball1');
+      var frame1 = document.getElementById('frame1');
+      var ball2 = document.getElementById('ball2');
+      var frame2 = document.getElementById('frame2');
+      const a = this.profile[this.profileN].contents.find(
+        x => x.month == this.month && x.day == this.day
+      );
+      const alarmfunc = alarmindex => {
+        let settime = a.alarmN[alarmindex].time;
+        let hour1 = settime.substr(0, 2);
+        let minute1 = settime.substr(3, 2);
+        let month1 = String(this.month);
+        let day1 = String(this.day);
+        if (month1.length == 1) {
+          month1 = '0' + month1;
+        }
+        if (day1.length == 1) {
+          day1 = '0' + day1;
+        }
+        let standard = String('2022' + month1 + day1 + hour1 + minute1 + '00');
+        var year = Number(standard.substring(0, 4));
+        var month = Number(standard.substring(4, 6));
+        var day = Number(standard.substring(6, 8));
+        var time = Number(standard.substring(8, 10));
+        var minute = Number(standard.substring(10, 12));
+        var second = Number(standard.substring(12, 14));
+        var oprDate = new Date(year, month - 1, day, time, minute, second);
+        var nowDate = new Date();
+        var timer = oprDate.getTime() - nowDate.getTime();
+        if (timer < 0) {
+          return 0;
+        } else {
+          var interval = setInterval(() => {
+            var now = new Date().getTime();
+            if (now - oprDate.getTime() > 0) {
+              if (alarmindex == 0) {
+                alert(a.alarmN[alarmindex].title);
+                ball0.classList.remove('balling-start-ball');
+                frame0.classList.remove('balling-start-frame');
+                this.ball0 = 0;
+                this.sendtomodal._id = this.userid;
+                this.sendtomodal.profileN = this.profileN;
+                this.sendtomodal.month = this.month;
+                this.sendtomodal.day = this.day;
+                this.sendtomodal.ball = this.ball0;
+                axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+                  this.$emit('updateprofilebymodal', 응답);
+                });
+              } else if (alarmindex == 1) {
+                alert(a.alarmN[alarmindex].title);
+                ball1.classList.remove('balling-start-ball');
+                frame1.classList.remove('balling-start-frame');
+                this.ball1 = 0;
+              } else {
+                alert(a.alarmN[alarmindex].title);
+                ball2.classList.remove('balling-start-ball');
+                frame2.classList.remove('balling-start-frame');
+                this.ball2 = 0;
+              }
+
+              clearInterval(interval);
+            }
+            if (alarmindex == 0 && this.ball0 == 0) {
+              clearInterval(interval);
+            } else if (alarmindex == 1 && this.ball1 == 0) {
+              clearInterval(interval);
+            } else if (alarmindex == 2 && this.ball2 == 0) {
+              clearInterval(interval);
+            }
+          }, 1000);
+        }
+      };
+      if (this.ball1 == 1) {
+        ball1.classList.add('balling-start-ball');
+        frame1.classList.add('balling-start-frame');
+        alarmfunc(1);
+      } else {
+        if (a.alarmN.length != 0) {
+          ball1.classList.remove('balling-start-ball');
+          frame1.classList.remove('balling-start-frame');
+        }
+      }
+    },
+    ball2() {
+      var ball0 = document.getElementById('ball0');
+      var frame0 = document.getElementById('frame0');
+      var ball1 = document.getElementById('ball1');
+      var frame1 = document.getElementById('frame1');
+      var ball2 = document.getElementById('ball2');
+      var frame2 = document.getElementById('frame2');
+      const a = this.profile[this.profileN].contents.find(
+        x => x.month == this.month && x.day == this.day
+      );
+      const alarmfunc = alarmindex => {
+        let settime = a.alarmN[alarmindex].time;
+        let hour1 = settime.substr(0, 2);
+        let minute1 = settime.substr(3, 2);
+        let month1 = String(this.month);
+        let day1 = String(this.day);
+        if (month1.length == 1) {
+          month1 = '0' + month1;
+        }
+        if (day1.length == 1) {
+          day1 = '0' + day1;
+        }
+        let standard = String('2022' + month1 + day1 + hour1 + minute1 + '00');
+        var year = Number(standard.substring(0, 4));
+        var month = Number(standard.substring(4, 6));
+        var day = Number(standard.substring(6, 8));
+        var time = Number(standard.substring(8, 10));
+        var minute = Number(standard.substring(10, 12));
+        var second = Number(standard.substring(12, 14));
+        var oprDate = new Date(year, month - 1, day, time, minute, second);
+        var nowDate = new Date();
+        var timer = oprDate.getTime() - nowDate.getTime();
+        if (timer < 0) {
+          return 0;
+        } else {
+          var interval = setInterval(() => {
+            var now = new Date().getTime();
+            if (now - oprDate.getTime() > 0) {
+              if (alarmindex == 0) {
+                alert(a.alarmN[alarmindex].title);
+                ball0.classList.remove('balling-start-ball');
+                frame0.classList.remove('balling-start-frame');
+                this.ball0 = 0;
+                this.sendtomodal._id = this.userid;
+                this.sendtomodal.profileN = this.profileN;
+                this.sendtomodal.month = this.month;
+                this.sendtomodal.day = this.day;
+                this.sendtomodal.ball = this.ball0;
+                axios.post('/BallUpdate', this.sendtomodal).then(응답 => {
+                  this.$emit('updateprofilebymodal', 응답);
+                });
+              } else if (alarmindex == 1) {
+                alert(a.alarmN[alarmindex].title);
+                ball1.classList.remove('balling-start-ball');
+                frame1.classList.remove('balling-start-frame');
+                this.ball1 = 0;
+              } else {
+                alert(a.alarmN[alarmindex].title);
+                ball2.classList.remove('balling-start-ball');
+                frame2.classList.remove('balling-start-frame');
+                this.ball2 = 0;
+              }
+
+              clearInterval(interval);
+            }
+            if (alarmindex == 0 && this.ball0 == 0) {
+              clearInterval(interval);
+            } else if (alarmindex == 1 && this.ball1 == 0) {
+              clearInterval(interval);
+            } else if (alarmindex == 2 && this.ball2 == 0) {
+              clearInterval(interval);
+            }
+          }, 1000);
+        }
+      };
+      if (this.ball2 == 1) {
+        ball2.classList.add('balling-start-ball');
+        frame2.classList.add('balling-start-frame');
+        alarmfunc(2);
+      } else {
+        if (a.alarmN.length != 0) {
+          ball2.classList.remove('balling-start-ball');
+          frame2.classList.remove('balling-start-frame');
+        }
+      }
     },
   },
 };

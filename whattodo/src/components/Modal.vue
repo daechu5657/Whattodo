@@ -163,29 +163,29 @@ export default {
         const a = this.profile[this.profileN].contents.find(
           x => x.month == this.month && x.day == this.day
         );
-        this.senddata.time = a.alarmN[this.sendtomodal.alarmindex].time;
-        this.senddata.title = a.alarmN[this.sendtomodal.alarmindex].title;
+        this.senddata.time = a.alarmN[this.sendtomodal.alarmorder].time;
+        this.senddata.title = a.alarmN[this.sendtomodal.alarmorder].title;
 
-        if (a.alarmN[this.sendtomodal.alarmindex].text[1] == '') {
+        if (a.alarmN[this.sendtomodal.alarmorder].text[1] == '') {
           this.senddata.text.push(
-            a.alarmN[this.sendtomodal.alarmindex].text[0]
+            a.alarmN[this.sendtomodal.alarmorder].text[0]
           );
-        } else if (a.alarmN[this.sendtomodal.alarmindex].text[2] == '') {
+        } else if (a.alarmN[this.sendtomodal.alarmorder].text[2] == '') {
           this.senddata.text.push(
-            a.alarmN[this.sendtomodal.alarmindex].text[0]
+            a.alarmN[this.sendtomodal.alarmorder].text[0]
           );
           this.senddata.text.push(
-            a.alarmN[this.sendtomodal.alarmindex].text[1]
+            a.alarmN[this.sendtomodal.alarmorder].text[1]
           );
         } else {
           this.senddata.text.push(
-            a.alarmN[this.sendtomodal.alarmindex].text[0]
+            a.alarmN[this.sendtomodal.alarmorder].text[0]
           );
           this.senddata.text.push(
-            a.alarmN[this.sendtomodal.alarmindex].text[1]
+            a.alarmN[this.sendtomodal.alarmorder].text[1]
           );
           this.senddata.text.push(
-            a.alarmN[this.sendtomodal.alarmindex].text[2]
+            a.alarmN[this.sendtomodal.alarmorder].text[2]
           );
         }
       }
