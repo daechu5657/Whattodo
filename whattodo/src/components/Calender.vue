@@ -1,23 +1,27 @@
 <template>
-  <div class="calender-wrap">
-    <span class="month-area">{{ selectmonth }}월</span>
-    <div class="daygrid-top">
-      <p>일</p>
-      <p>월</p>
-      <p>화</p>
-      <p>수</p>
-      <p>목</p>
-      <p>금</p>
-      <p>토</p>
-    </div>
-    <div class="daygird-flex">
-      <a @click="previous" v-if="previousbtn == 1">이전달</a>
-      <div class="daygird-main">
-        <span v-for="(a, i) in date" :key="i" @click="clickday(a)">{{
-          a
-        }}</span>
+  <div class="calender-outside">
+    <div class="calender-wrap">
+      <div class="daygrid-month">
+        <span>{{ topmonth }}</span>
       </div>
-      <a @click="next" v-if="nextbtn == 1">다음달</a>
+      <div class="daygrid-top">
+        <p>Su</p>
+        <p>Mo</p>
+        <p>Tu</p>
+        <p>We</p>
+        <p>Th</p>
+        <p>Fr</p>
+        <p>Sa</p>
+      </div>
+      <div class="daygrid-flex">
+        <a @click="previous" v-if="previousbtn == 1">&lt;</a>
+        <div class="daygrid-main">
+          <span v-for="(a, i) in date" :key="i" @click="clickday(a)">{{
+            a
+          }}</span>
+        </div>
+        <a @click="next" v-if="nextbtn == 1">&gt;</a>
+      </div>
     </div>
   </div>
 </template>
@@ -32,6 +36,7 @@ export default {
     return {
       dateofmonth: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
       date: [],
+      topmonth: '',
       selectmonth: m,
       selectday: 0,
       selectData: [{ month: m }, { day: '' }],
@@ -63,22 +68,10 @@ export default {
     },
     clickday(a) {
       this.selectday = a;
-      // axios.post('/CalenderUpdate', this.logindata).then(응답 => {
-      //   this.$emit('getid', 응답);
-      //   this.onoff = 'off';
-      // });
     },
   },
   watch: {
     selectmonth() {
-      // if (this.selectmonth == 1) {
-      //   this.previousbtn = 0;
-      // } else if (this.selectmonth == 12) {
-      //   this.nextbtn = 0;
-      // } else {
-      //   this.previousbtn = 1;
-      //   this.nextbtn = 1;
-      // }
       this.date = [];
       let date = new Date();
       let currnetyear = date.getFullYear();
@@ -103,6 +96,31 @@ export default {
         for (blank = 0; blank < firstday; blank++) {
           this.date.unshift('');
         }
+      }
+      if (this.selectmonth == 1) {
+        this.topmonth = 'January';
+      } else if (this.selectmonth == 2) {
+        this.topmonth = 'February';
+      } else if (this.selectmonth == 3) {
+        this.topmonth = 'March';
+      } else if (this.selectmonth == 4) {
+        this.topmonth = 'April';
+      } else if (this.selectmonth == 5) {
+        this.topmonth = 'May';
+      } else if (this.selectmonth == 6) {
+        this.topmonth = 'June ';
+      } else if (this.selectmonth == 7) {
+        this.topmonth = 'July';
+      } else if (this.selectmonth == 8) {
+        this.topmonth = 'August';
+      } else if (this.selectmonth == 9) {
+        this.topmonth = 'September';
+      } else if (this.selectmonth == 10) {
+        this.topmonth = 'October';
+      } else if (this.selectmonth == 11) {
+        this.topmonth = 'November';
+      } else if (this.selectmonth == 12) {
+        this.topmonth = 'December';
       }
     },
     selectday() {
@@ -132,6 +150,31 @@ export default {
         this.date.unshift('');
       }
     }
+    if (this.selectmonth == 1) {
+      this.topmonth = 'January';
+    } else if (this.selectmonth == 2) {
+      this.topmonth = 'February';
+    } else if (this.selectmonth == 3) {
+      this.topmonth = 'March';
+    } else if (this.selectmonth == 4) {
+      this.topmonth = 'April';
+    } else if (this.selectmonth == 5) {
+      this.topmonth = 'May';
+    } else if (this.selectmonth == 6) {
+      this.topmonth = 'June ';
+    } else if (this.selectmonth == 7) {
+      this.topmonth = 'July';
+    } else if (this.selectmonth == 8) {
+      this.topmonth = 'August';
+    } else if (this.selectmonth == 9) {
+      this.topmonth = 'September';
+    } else if (this.selectmonth == 10) {
+      this.topmonth = 'October';
+    } else if (this.selectmonth == 11) {
+      this.topmonth = 'November';
+    } else if (this.selectmonth == 12) {
+      this.topmonth = 'December';
+    }
   },
 };
 </script>
@@ -140,38 +183,91 @@ export default {
 div {
   box-sizing: border-box;
 }
-.calender-wrap {
+.calender-outside {
+  position: absolute;
   width: 1024px;
   height: 90vh;
-  position: absolute;
+  z-index: 100;
   top: 0;
-  z-index: 1000;
-  background-color: gray;
 }
-.month-area {
-  width: 1024px;
-  height: 8vh;
-  background-color: beige;
+.calender-wrap {
+  width: 700px;
+  height: 50vh;
+  position: absolute;
+  top: 20vh;
+  left: 167px;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 14px 6px rgba(0, 0, 0, 0.4);
+  border-radius: 30px;
+  backdrop-filter: blur(8px);
+}
+.daygrid-month {
+  width: inherit;
+  height: 5vh;
+  text-align: center;
+  padding-top: 13px;
+  padding-bottom: 8px;
+}
+.daygrid-month > span {
+  font-size: 24px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.8);
 }
 .daygrid-top {
-  width: inherit;
-  height: 2vh;
+  width: 490px;
+  height: 5vh;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  background-color: beige;
+  background-color: transparent;
   position: relative;
-  padding: 0 100px;
+  left: 105px;
+  text-align: center;
+  align-items: center;
 }
-.daygird-flex {
+.daygrid-top > p {
+  width: 70px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.daygrid-flex {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-items: center;
+  height: 40vh;
 }
-.daygird-main {
-  width: 824px;
-  height: 80vh;
+.daygrid-flex > a {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.8);
+  height: 50px;
+  padding: 0px 0px 7px 0px;
+}
+.daygrid-flex > a:hover {
+  background-color: rgba(66, 63, 64, 0.5);
+  border-radius: 30px;
+  transition: 0.3s ease;
+}
+.daygrid-main {
+  width: 490px;
+  height: 40vh;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   position: relative;
+}
+.daygrid-main > span {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 70px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.daygrid-main > span:hover {
+  transition: 0.3s ease;
+  box-shadow: 0px 0px 14px 6px rgba(0, 0, 0, 0.4);
 }
 </style>

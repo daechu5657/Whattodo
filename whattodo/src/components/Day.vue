@@ -80,27 +80,31 @@
         <button @click="modal()" v-if="alarmN != 3">+</button>
       </div>
     </section>
-    <Modal
-      v-if="modalOnOff == 1"
-      :profileN="profileN"
-      :modalOnOff="modalOnOff"
-      @modalOnOffchange="modalOnOffchange"
-      :month="month"
-      :day="day"
-      :userid="userid"
-      @updateprofilebymodal="updateprofilebymodal"
-      :sendtomodal="sendtomodal"
-      :alarmindex="alarmindex"
-      :profile="profile"
-      :modifyOn="modifyOn"
-      @modifychange="modifychange"
-      :boxindex="boxindex"
-      @boxindexreset="boxindexreset"
-    />
-    <Calender
-      @SelectCalenderDay="SelectCalenderDay"
-      v-if="CalenderOnOff == 1"
-    />
+    <transition name="modal">
+      <Modal
+        v-if="modalOnOff == 1"
+        :profileN="profileN"
+        :modalOnOff="modalOnOff"
+        @modalOnOffchange="modalOnOffchange"
+        :month="month"
+        :day="day"
+        :userid="userid"
+        @updateprofilebymodal="updateprofilebymodal"
+        :sendtomodal="sendtomodal"
+        :alarmindex="alarmindex"
+        :profile="profile"
+        :modifyOn="modifyOn"
+        @modifychange="modifychange"
+        :boxindex="boxindex"
+        @boxindexreset="boxindexreset"
+      />
+    </transition>
+    <transition name="calender">
+      <Calender
+        @SelectCalenderDay="SelectCalenderDay"
+        v-if="CalenderOnOff == 1"
+      />
+    </transition>
   </div>
 </template>
 
@@ -619,7 +623,6 @@ export default {
         if (a.alarmN.length >= 1) {
           if (a.alarmN[0].ball == 1 && ballupdatestandard(0) != 0) {
             this.ball0 = 1;
-            console.log(1);
           } else if (a.alarmN[0].ball == 1 && ballupdatestandard(0) == 0) {
             alert('알림다시맞춰주세용');
             ball0.classList.remove('balling-start-ball');
@@ -635,7 +638,6 @@ export default {
             });
           } else {
             this.ball0 = 0;
-            console.log(2);
           }
         }
       }, 1000);
@@ -645,7 +647,6 @@ export default {
         if (a.alarmN.length >= 2) {
           if (a.alarmN[1].ball == 1 && ballupdatestandard(1) != 0) {
             this.ball1 = 1;
-            console.log(1);
           } else if (a.alarmN[1].ball == 1 && ballupdatestandard(1) == 0) {
             alert('알림다시맞춰주세용');
             ball1.classList.remove('balling-start-ball');
@@ -661,7 +662,6 @@ export default {
             });
           } else {
             this.ball1 = 0;
-            console.log(2);
           }
         }
       }, 1000);
@@ -672,7 +672,6 @@ export default {
         if (a.alarmN.length >= 3) {
           if (a.alarmN[2].ball == 1 && ballupdatestandard(2) != 0) {
             this.ball2 = 1;
-            console.log(1);
           } else if (a.alarmN[2].ball == 1 && ballupdatestandard(2) == 0) {
             alert('알림다시맞춰주세용');
             ball2.classList.remove('balling-start-ball');
@@ -688,7 +687,6 @@ export default {
             });
           } else {
             this.ball2 = 0;
-            console.log(2);
           }
         }
       }, 1000);
@@ -971,7 +969,6 @@ export default {
         if (a.alarmN.length >= 0) {
           if (a.alarmN[0].ball == 1 && ballupdatestandard(0) != 0) {
             this.ball0 = 1;
-            console.log(7);
           } else if (a.alarmN[0].ball == 1 && ballupdatestandard(0) == 0) {
             this.ball0 = 0;
             this.sendtomodal._id = this.userid;
@@ -984,7 +981,6 @@ export default {
             });
           } else {
             this.ball0 = 0;
-            console.log(8);
           }
         } else {
           this.ball0 = 0;
@@ -994,7 +990,6 @@ export default {
         if (a.alarmN.length >= 1) {
           if (a.alarmN[1].ball == 1 && ballupdatestandard(1) != 0) {
             this.ball1 = 1;
-            console.log(7);
           } else if (a.alarmN[1].ball == 1 && ballupdatestandard(1) == 0) {
             this.ball1 = 0;
             this.sendtomodal._id = this.userid;
@@ -1007,7 +1002,6 @@ export default {
             });
           } else {
             this.ball1 = 0;
-            console.log(8);
           }
         } else {
           this.ball1 = 0;
@@ -1017,7 +1011,6 @@ export default {
         if (a.alarmN.length >= 2) {
           if (a.alarmN[2].ball == 1 && ballupdatestandard(2) != 0) {
             this.ball2 = 1;
-            console.log(7);
           } else if (a.alarmN[2].ball == 1 && ballupdatestandard(2) == 0) {
             this.ball2 = 0;
             this.sendtomodal._id = this.userid;
@@ -1030,7 +1023,6 @@ export default {
             });
           } else {
             this.ball2 = 0;
-            console.log(8);
           }
         } else {
           this.ball2 = 0;
@@ -1111,7 +1103,6 @@ export default {
         if (a.alarmN.length >= 1) {
           if (a.alarmN[0].ball == 1 && ballupdatestandard(0) != 0) {
             this.ball0 = 1;
-            console.log(3);
           } else if (a.alarmN[0].ball == 1 && ballupdatestandard(0) == 0) {
             this.ball0 = 0;
             this.sendtomodal._id = this.userid;
@@ -1124,7 +1115,6 @@ export default {
             });
           } else {
             this.ball0 = 0;
-            console.log(4);
           }
         } else {
           this.ball0 = 0;
@@ -1135,7 +1125,6 @@ export default {
         if (a.alarmN.length >= 2) {
           if (a.alarmN[1].ball == 1 && ballupdatestandard(1) != 0) {
             this.ball1 = 1;
-            console.log(3);
           } else if (a.alarmN[1].ball == 1 && ballupdatestandard(1) == 0) {
             this.ball1 = 0;
             this.sendtomodal._id = this.userid;
@@ -1148,7 +1137,6 @@ export default {
             });
           } else {
             this.ball1 = 0;
-            console.log(4);
           }
         } else {
           this.ball1 = 0;
@@ -1159,7 +1147,6 @@ export default {
         if (a.alarmN.length >= 3) {
           if (a.alarmN[2].ball == 1 && ballupdatestandard(2) != 0) {
             this.ball2 = 1;
-            console.log(3);
           } else if (a.alarmN[2].ball == 1 && ballupdatestandard(2) == 0) {
             this.ball2 = 0;
             this.sendtomodal._id = this.userid;
@@ -1172,7 +1159,6 @@ export default {
             });
           } else {
             this.ball2 = 0;
-            console.log(4);
           }
         } else {
           this.ball2 = 0;
@@ -1677,6 +1663,21 @@ body {
   animation: insideout 0.2s 0s 1 ease alternate;
 }
 
+.modal-enter-active {
+  /* transition: opacity 0.3s ease-in-out; */
+  animation: zoom-in 0.3s ease;
+}
+.modal-leave-active {
+  animation: zoom-in 0.3s ease reverse;
+}
+.calender-enter-active {
+  /* transition: opacity 0.3s ease-in-out; */
+  animation: zoom-in 0.3s ease;
+}
+.calender-leave-active {
+  animation: zoom-in 0.3s ease reverse;
+}
+
 @keyframes insidein {
   0% {
     height: 0px;
@@ -1798,6 +1799,16 @@ body {
     height: 200px;
 
     margin-bottom: 14px;
+    opacity: 1;
+  }
+}
+@keyframes zoom-in {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
     opacity: 1;
   }
 }

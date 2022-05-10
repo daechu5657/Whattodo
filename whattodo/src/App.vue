@@ -15,13 +15,22 @@
             @updateprofile="updateprofile"
             @updateprofilebymodal="updateprofilebymodal"
           />
+          <transition name="settings">
+            <Settings
+              :SettingsOnOff="SettingsOnOff"
+              :profile="profile"
+              :profileimage="profileimage"
+              @clickSettings="clickSettings"
+              :userid="userid"
+              @updateprofile="updateprofile"
+            />
+          </transition>
         </div>
         <div class="footer">
           <div class="footer-contents">
             <span @click="clicktoday">Today</span>
             <span @click="clickCalender">Calendar</span>
-            <span>Settings</span>
-
+            <span @click="clickSettings">Settings</span>
             <div class="profile" @click="profileNchange">
               <transition name="profilechange2">
                 <div class="profile-2" :key="profileNumber1">
@@ -58,13 +67,13 @@
 <script>
 import Day from './components/Day.vue';
 import Login from './components/Login.vue';
-
-// import axios from 'axios';
+import Settings from './components/Setting.vue';
 export default {
   name: 'App',
   components: {
     Day: Day,
     Login: Login,
+    Settings: Settings,
   },
   data() {
     return {
@@ -78,6 +87,7 @@ export default {
       CalenderOnOff: 0,
       profileNumber0: 0,
       profileNumber1: 1,
+      SettingsOnOff: 0,
     };
   },
   methods: {
@@ -109,6 +119,13 @@ export default {
       } else {
         this.CalenderOnOff = 0;
         this.TodayOn = 1;
+      }
+    },
+    clickSettings() {
+      if (this.SettingsOnOff == 1) {
+        this.SettingsOnOff = 0;
+      } else {
+        this.SettingsOnOff = 1;
       }
     },
   },
@@ -239,6 +256,7 @@ body {
   border-radius: 50%;
   margin-top: 10px;
   background-position: center center;
+  background-size: cover;
 }
 .profile-img1 {
   position: relative;
@@ -248,6 +266,7 @@ body {
   border-radius: 50%;
   margin-top: 10px;
   background-position: center center;
+  background-size: cover;
 }
 .profile-name0 {
   position: relative;
@@ -301,5 +320,11 @@ body {
 }
 .profilechange1-leave-to {
   opacity: 0;
+}
+.settings-enter-active {
+  animation: zoom-in 0.3s ease;
+}
+.settings-leave-active {
+  animation: zoom-in 0.3s ease reverse;
 }
 </style>

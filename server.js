@@ -378,6 +378,29 @@ MongoClient.connect(
         );
       }
     });
+    app.post('/SettingUpdate', function (요청, 응답) {
+      db.collection('contents').updateMany(
+        {
+          _id: 요청.body._id,
+        },
+        {
+          $set: {
+            'profile.0.profilename': 요청.body.name0,
+            'profile.0.profileimage': 요청.body.img0,
+            'profile.1.profilename': 요청.body.name1,
+            'profile.1.profileimage': 요청.body.img1,
+          },
+        },
+        function (에러, 결과) {
+          db.collection('contents')
+            .find({ _id: 요청.body._id })
+            .toArray()
+            .then(a => {
+              응답.send(a);
+            });
+        }
+      );
+    });
   }
 );
 

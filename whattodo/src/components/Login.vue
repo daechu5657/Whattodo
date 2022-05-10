@@ -29,6 +29,7 @@
               class="testid"
               v-model="loginframe._id"
               placeholder="Id"
+              spellcheck="false"
             />
 
             <input
@@ -36,6 +37,7 @@
               class="testpwd"
               v-model="loginframe.pwd"
               placeholder="Pwd"
+              spellcheck="false"
             />
 
             <input
@@ -43,6 +45,7 @@
               class="testpwdr"
               v-model="pwdr"
               placeholder="Pwd Check"
+              spellcheck="false"
             />
           </div>
           <div class="login-bottom-contents-middle-img">
@@ -77,6 +80,7 @@
               class="profilename1"
               v-model="loginframe.name0"
               placeholder="Profile 1 Name"
+              spellcheck="false"
             />
 
             <input
@@ -84,6 +88,7 @@
               class="profilename2"
               v-model="loginframe.name1"
               placeholder="Profile 2 Name"
+              spellcheck="false"
             />
           </div>
           <p id="notice">&nbsp;{{ Noticesign }}</p>
@@ -402,6 +407,7 @@ input {
   box-shadow: 1px 7px 10px 4px rgba(0, 0, 0, 0.3);
   border-radius: 50%;
   background-position: center center;
+  background-size: cover;
 }
 .middleimg1 {
   width: 200px;
@@ -410,6 +416,7 @@ input {
   box-shadow: 1px 7px 10px 4px rgba(0, 0, 0, 0.3);
   border-radius: 50%;
   background-position: center center;
+  background-size: cover;
 }
 
 .login-bottom-contents-middle {
