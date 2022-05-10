@@ -158,6 +158,10 @@ div {
 body {
   margin: 0;
   padding: 0;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .wrap {
   position: relative;

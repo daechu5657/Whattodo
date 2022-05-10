@@ -9,13 +9,30 @@
           v-model="senddata.title"
           spellcheck="false"
         />
-        <input
-          type="time"
-          class="time"
-          placeholder="Time"
-          v-model="senddata.time"
-        />
+        <p class="time" @click="timepickerOn">Time &nbsp;{{ senddata.time }}</p>
       </div>
+      <transition name="time-picker">
+        <div class="time-picker-wrap" v-if="timeOnOff == 1">
+          <div class="time-picker">
+            <div class="hour">
+              <div class="hr-up" @click="hup"></div>
+              <div class="hr">{{ hour }}</div>
+              <div class="hr-down" @click="hdown"></div>
+            </div>
+            <div class="separator">:</div>
+            <div class="minute">
+              <div class="min-up" @click="mup"></div>
+              <div class="min">{{ min }}</div>
+              <div class="min-down" @click="mdown"></div>
+            </div>
+          </div>
+          <div class="time-picker-btn">
+            <button @click="settime">Set</button>
+            <button @click="timepickerOn">Close</button>
+          </div>
+        </div>
+      </transition>
+
       <div class="modal-content">
         <div
           class="modal-content-box"
@@ -48,6 +65,10 @@ import axios from 'axios';
 export default {
   data() {
     return {
+      fake: 'Time',
+      hour: 0,
+      min: 0,
+      timeOnOff: 0,
       index: 0,
       indexm: 0,
       alert: '',
@@ -136,7 +157,7 @@ export default {
         setTimeout(function () {
           alert.classList.remove('wrongdata');
         }, 500);
-      } else if (this.senddata.time == '') {
+      } else if (this.senddata.time == '' || this.senddata.time == '0:0') {
         this.alert = 'Enter the time';
         alert.classList.add('wrongdata');
         setTimeout(function () {
@@ -224,6 +245,52 @@ export default {
         });
       }
     },
+    hup() {
+      this.hour++;
+      if (this.hour == 24) {
+        this.hour = 0;
+      }
+    },
+    hdown() {
+      this.hour--;
+      if (this.hour < 0) {
+        this.hour = 23;
+      }
+    },
+    mup() {
+      this.min++;
+      if (this.min == 60) {
+        this.min = 0;
+      }
+    },
+    mdown() {
+      this.min--;
+      if (this.min < 0) {
+        this.min = 59;
+      }
+    },
+    settime() {
+      var hour = this.hour;
+      hour = hour.toString();
+      var min = this.min;
+      min = min.toString();
+
+      if (hour.length == 1) {
+        hour = '0' + hour;
+      }
+      if (min.length == 1) {
+        min = '0' + min;
+      }
+      var time = `${hour}:${min}`;
+      this.senddata.time = time;
+    },
+    timepickerOn() {
+      if (this.timeOnOff == 1) {
+        this.timeOnOff = 0;
+      } else {
+        this.timeOnOff = 1;
+      }
+    },
   },
   watch: {
     modifyOn() {
@@ -282,6 +349,109 @@ div {
 body {
   margin: 0;
   padding: 0;
+}
+.time-picker-wrap {
+  width: 200px;
+  height: 165px;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+  box-shadow: 1px 7px 10px 4px rgb(0 0 0 / 30%);
+  border-radius: 30px;
+  left: 529px;
+  top: 7px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+.time-picker {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  background-color: transparent;
+  width: 200px;
+  height: 150px;
+  align-items: center;
+  padding: 0px 19px;
+}
+.hour {
+  height: 105px;
+}
+.separator {
+  font-size: 48px;
+  color: rgba(255, 255, 255, 0.8);
+  height: 75px;
+}
+.minute {
+  height: 105px;
+}
+.hr {
+  font-size: 48px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+}
+.min {
+  font-size: 48px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+}
+.hr-up {
+  width: 53px;
+  height: 20px;
+  border-left: 26.5px solid transparent;
+  border-right: 26.5px solid transparent;
+  cursor: pointer;
+  border-bottom: 20px solid rgba(255, 255, 255, 0.6);
+}
+.hr-down {
+  width: 53px;
+  height: 20px;
+  border-left: 26.5px solid transparent;
+  border-right: 26.5px solid transparent;
+  cursor: pointer;
+  border-top: 20px solid rgba(255, 255, 255, 0.6);
+}
+.min-up {
+  width: 53px;
+  height: 20px;
+  border-left: 26.5px solid transparent;
+  border-right: 26.5px solid transparent;
+  cursor: pointer;
+  border-bottom: 20px solid rgba(255, 255, 255, 0.6);
+}
+.min-down {
+  width: 53px;
+  height: 20px;
+  border-left: 26.5px solid transparent;
+  border-right: 26.5px solid transparent;
+  cursor: pointer;
+  border-top: 20px solid rgba(255, 255, 255, 0.6);
+}
+.time-picker-btn {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  height: 40px;
+}
+.time-picker-btn > button {
+  background: transparent;
+  border: 0;
+  color: rgba(255, 255, 255, 0.6);
+  transition: 0.3s ease;
+  font-size: 14px;
+}
+.time-picker-btn > button:hover {
+  background-color: rgba(66, 63, 64, 0.5);
+  border-radius: 30px;
+  transition: 0.3s ease;
+  border: 0;
+}
+.time {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 24px;
+  width: 129px;
+  margin-right: 23px;
+  text-align: center;
 }
 .modal-outside {
   position: absolute;
@@ -447,5 +617,12 @@ body {
   }
   100% {
   }
+}
+
+.time-picker-enter-active {
+  animation: zoom-in 0.3s ease;
+}
+.time-picker-leave-active {
+  animation: zoom-in 0.3s ease reverse;
 }
 </style>
